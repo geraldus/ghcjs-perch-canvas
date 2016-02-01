@@ -2,10 +2,10 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                ghcjs-perch-canvas
-version:             0.0.1.5
+version:             0.0.1.6
 synopsis:            Perch-like canvas monad.
 -- description:
-license:             GPL-3
+license:             MIT
 license-file:        LICENSE
 author:              Arthur S. Fayzrakhmanov
 maintainer:          heraldhoi@gmail.com
