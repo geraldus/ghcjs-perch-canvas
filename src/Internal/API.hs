@@ -20,24 +20,22 @@ canvas2dCtx = canvasCtx ctxName2d
 
 -- | Set all pixels in rectangle to transparent black erasing old contents.
 clearRect :: Coords -> Pixels -> Pixels -> CanvasRender ()
-clearRect c w h = CanvasRender $ \ctx ->
-  do let (rx, ry) = fromCoords c
+clearRect cs w h = CanvasRender $ withCtx $ \c ->
+  do let (rx, ry) = fromCoords cs
          w' = pix w
          h' = pix h
-     js_canvasContext2dClearRect (getContext ctx) rx ry w' h'
-     return ctx
+     js_canvasContext2dClearRect c rx ry w' h'
 
 -- | Paint a rectangle using current stroke style.
 strokeRect :: Coords -- ^ rectangle starting point
            -> Pixels -- ^ rectangle width
            -> Pixels -- ^ rectangle height
            -> CanvasRender ()
-strokeRect c w h = CanvasRender $ \ctx ->
-  do let (rx, ry) = fromCoords c
+strokeRect cs w h = CanvasRender $ withCtx $ \c ->
+  do let (rx, ry) = fromCoords cs
          w' = pix w
          h' = pix h
-     js_canvasContext2dStrokeRect (getContext ctx) rx ry w' h'
-     return ctx
+     js_canvasContext2dStrokeRect c rx ry w' h'
 
 -- * Drwing Text
 
@@ -47,13 +45,11 @@ fillText :: Text -- ^ text to render
          -> Pixels -- ^ y
          -> Maybe Pixels -- ^ optional max width
          -> CanvasRender ()
-fillText txt x y mw = CanvasRender $ \ctx ->
+fillText txt x y mw = CanvasRender $ withCtx $ \c ->
   do let t = textToJSString txt
-         c = getContext ctx
      case mw of
        Nothing -> js_canvasContext2dFillTextA3 c t (pix x) (pix y)
        Just w -> js_canvasContext2dFillTextA4 c t (pix x) (pix y) (pix w)
-     return ctx
 
 
 -- * Paths
@@ -62,18 +58,14 @@ fillText txt x y mw = CanvasRender $ \ctx ->
 -- | Starts a new path by emptying the list of sub-paths. Call this method when
 -- you want to create a new path.
 beginPath :: CanvasRender ()
-beginPath = CanvasRender $ \ctx ->
-  do js_canvasContext2dBeginPath (getContext ctx)
-     return ctx
+beginPath = CanvasRender $ withCtx $ js_canvasContext2dBeginPath
 
 -- | Causes the point of the pen to move back to the start of the current
 -- sub-path. It tries to draw a straight line from the current point to the
 -- start. If the shape has already been closed or has only one point, this
 -- function does nothing.
 closePath :: CanvasRender ()
-closePath = CanvasRender $ \ctx ->
-  do js_canvasContext2dClosePath (getContext ctx)
-     return ctx
+closePath = CanvasRender $ withCtx $ js_canvasContext2dClosePath
 
 
 -- * Drawing Images
@@ -81,9 +73,8 @@ closePath = CanvasRender $ \ctx ->
 -- | Set context images smoothing.  Note, this is experimental feature and may
 -- not work properly in some cases.
 setImageSmoothing :: Bool -> CanvasRender ()
-setImageSmoothing v = CanvasRender $ \ctx ->
-  do js_canvasContext2dSetImageSmoothing (getContext ctx) v
-     return ctx
+setImageSmoothing v = CanvasRender $ withCtx $
+  flip js_canvasContext2dSetImageSmoothing v
 
 -- | Handy shortcut for enabling image smoothing.
 enableImageSmoothing :: CanvasRender ()
@@ -95,29 +86,24 @@ disableImageSmoothing = setImageSmoothing False
 
 -- | Draw an image.
 drawImage :: CanvasDrawImageSettings -> CanvasRender ()
-drawImage (DrawImageSimple (CanvasImageSource is) dx dy) = CanvasRender $
-  \ctx ->
-    do js_canvasContext2dDrawImageA3 (getContext ctx) is (pix dx) (pix dy)
-       return ctx
-drawImage (DrawImageSized (CanvasImageSource is) dx dy w h) = CanvasRender $
-  \ctx ->
-    do js_canvasContext2dDrawImageA5
-         (getContext ctx) is (pix dx) (pix dy) (pix w) (pix h)
-       return ctx
+drawImage (DrawImageSimple (CanvasImageSource is) dx dy) =
+  CanvasRender $ withCtx $ \c ->
+    js_canvasContext2dDrawImageA3 c is (pix dx) (pix dy)
+drawImage (DrawImageSized (CanvasImageSource is) dx dy w h) =
+  CanvasRender $ withCtx $ \c ->
+    js_canvasContext2dDrawImageA5 c is (pix dx) (pix dy) (pix w) (pix h)
 drawImage (DrawImageCropped
             (CanvasImageSource is) sx sy sWidth sHeight dx dy dWidth dHeight) =
-  CanvasRender $ \ctx ->
-    do let (CanvasCtx c) = ctx
-           d = pix sx
-           e = pix sy
-           f = pix sWidth
-           g = pix sHeight
-           h = pix dx
-           i = pix dy
-           j = pix dWidth
-           k = pix dHeight
-       js_canvasContext2dDrawImageA9 c is d e f g h i j k
-       return ctx
+  CanvasRender $ withCtx $ \c ->
+    let d = pix sx
+        e = pix sy
+        f = pix sWidth
+        g = pix sHeight
+        h = pix dx
+        i = pix dy
+        j = pix dWidth
+        k = pix dHeight
+    in js_canvasContext2dDrawImageA9 c is d e f g h i j k
 
 
 -- | Convert integral value to 'Pixels'.
