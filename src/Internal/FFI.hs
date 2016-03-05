@@ -56,7 +56,7 @@ foreign import javascript unsafe
 
 -- | Fill text, max width variant.
 foreign import javascript unsafe
-  "$1.fillText($2, $3, $4)"
+  "$1.fillText($2, $3, $4, $5)"
   js_canvasContext2dFillTextA4 :: Elem -- ^ context
                                -> JSString -- ^ text to render
                                -> Int -- ^ x
