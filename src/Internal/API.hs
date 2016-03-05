@@ -51,11 +51,16 @@ fillText txt x y mw = CanvasRender $ withCtx $ \c ->
        Nothing -> js_canvasContext2dFillTextA3 c t (pix x) (pix y)
        Just w -> js_canvasContext2dFillTextA4 c t (pix x) (pix y) (pix w)
 
+-- | Set 2d context font.
+--
+-- Given text should be in format @\<SIZE\>px \<NAME\>@, example:
+-- @"48px Iosevka Slab"@.
 setContextFont :: Text -> CanvasRender ()
 setContextFont fontSpec =
   CanvasRender $ withCtx $
     flip js_canvasContext2dSetFont (textToJSString fontSpec)
 
+-- | Get 2d context font.
 getContextFont :: CanvasCtx -> IO Text
 getContextFont c = textFromJSString <$> js_canvasContext2dGetFont (getContext c)
 
