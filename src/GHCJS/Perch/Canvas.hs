@@ -9,6 +9,8 @@ module GHCJS.Perch.Canvas
   , strokeRect
     -- ** Drawing Text
   , fillText
+  , setContextFont
+  , getContextFont
     -- ** Paths
   , beginPath
   , closePath
