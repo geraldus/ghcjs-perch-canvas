@@ -3,7 +3,7 @@ module Internal.API where
 import           Internal.FFI
 import           Internal.Type
 
-import           Data.JSString.Text (textToJSString)
+import           Data.JSString.Text (textFromJSString, textToJSString)
 import           GHCJS.Marshal      (FromJSVal (..))
 import           GHCJS.Perch        (Elem)
 
@@ -50,6 +50,14 @@ fillText txt x y mw = CanvasRender $ withCtx $ \c ->
      case mw of
        Nothing -> js_canvasContext2dFillTextA3 c t (pix x) (pix y)
        Just w -> js_canvasContext2dFillTextA4 c t (pix x) (pix y) (pix w)
+
+setContextFont :: Text -> CanvasRender ()
+setContextFont fontSpec =
+  CanvasRender $ withCtx $
+    flip js_canvasContext2dSetFont (textToJSString fontSpec)
+
+getContextFont :: CanvasCtx -> IO Text
+getContextFont c = textFromJSString <$> js_canvasContext2dGetFont (getContext c)
 
 
 -- * Paths
