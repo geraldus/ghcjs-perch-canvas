@@ -2,7 +2,7 @@ packages:
 - .
 - location:
     git: https://github.com/geraldus/ghcjs-perch.git
-    commit: 0326b677e1782d8f1c7f20b63c20002f2c1e06bf
+    commit: 363de41a03d708a82d63705d3acc2827d3c69a34
   extra-dep: true
 
 compiler: ghcjs-0.2.0.20151029_ghc-7.10.2
