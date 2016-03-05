@@ -64,6 +64,14 @@ foreign import javascript unsafe
                                -> Int -- ^ max width
                                -> IO ()
 
+-- | Set context font.
+foreign import javascript unsafe
+  "$1.font = $2;" js_canvasContext2dSetFont :: Elem -> JSString -> IO ()
+
+-- | Set context font.
+foreign import javascript unsafe
+  "$1.font" js_canvasContext2dGetFont :: Elem -> IO JSString
+
 
 -- * Drawing Images
 
