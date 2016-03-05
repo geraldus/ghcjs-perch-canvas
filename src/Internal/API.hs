@@ -153,6 +153,12 @@ canvasCtx n e =
                   Just e -> return $ CanvasCtx e
 
 
+-- | Do action with 'CanvasCtx' and return it.
+withCtx :: (Elem -> IO ()) -> CanvasCtx -> IO CanvasCtx
+withCtx io c =
+  do io (getContext c)
+     return c
+
 -- | Unwrap canvas element from 'CanvasCtx'.
 getContext :: CanvasCtx -> Elem
 getContext (CanvasCtx e) = e
